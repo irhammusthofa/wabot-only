@@ -26,6 +26,7 @@ def init():
     wabot_loop(driver)
 
 def wabot(driver):
+    status_driver = driver.get_status()
     if (status_driver==WhatsAPIDriverStatus.LoggedIn):
         url = "https://wa.golekonline.com/api1/message/outbox"
         myResponse = requests.get(url,auth=HTTPBasicAuth('what-bot','f0ba1f94ba5614a6c63357a5770a8e2707aab72e86e0ead124f769c7a7b5a1b0'), verify=True)
@@ -44,7 +45,7 @@ def wabot(driver):
             update(arr_id)
         else:
             myResponse.raise_for_status()
-            
+
 def wabot_loop(driver):
     while True:
         time.sleep(10)
