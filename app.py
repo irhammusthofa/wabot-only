@@ -33,7 +33,7 @@ def wabot(driver):
         # For successful API call, response code will be 200 (OK)
         arr_id = []
         if(myResponse.ok):
-            jData = json.loads(myResponse.content)
+            jData = json.loads(myResponse.content.decode('utf-8'))
             for key in jData:
                 id = key['ow_id']
                 to = key['ow_to']

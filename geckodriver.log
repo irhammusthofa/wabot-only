@@ -21078,3 +21078,9 @@ JavaScript warning: https://web.whatsapp.com/app.3edd7478de09f0c4750f.js, line 1
 JavaScript warning: https://web.whatsapp.com/app.3edd7478de09f0c4750f.js, line 1: unreachable code after return statement
 JavaScript warning: https://web.whatsapp.com/app.3edd7478de09f0c4750f.js, line 1: unreachable code after return statement
 JavaScript warning: https://web.whatsapp.com/app.3edd7478de09f0c4750f.js, line 1: unreachable code after return statement
+1598060716275	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/jc/_kncm8md7b12gmd16fs7zh_40000gn/T/rust_mozprofile.roLq5mFaf0c3"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1598060722511	Marionette	INFO	Listening on port 52444
+1598060722534	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://web.whatsapp.com/app.696e69d51d821d44fec9.js, line 1: unreachable code after return statement
+JavaScript warning: https://web.whatsapp.com/app.696e69d51d821d44fec9.js, line 1: unreachable code after return statement
