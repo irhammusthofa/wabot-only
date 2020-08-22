@@ -5,6 +5,14 @@ from webwhatsapi.objects.message import Message
 import mysql.connector
 from mysql.connector import Error
 from pathlib import Path
+import requests
+from requests.auth import HTTPBasicAuth
+import json
+
+def update(arr):
+    url = 'https://wa.golekonline.com/api1/message/outbox'
+    myobj = {'id': json.dumps(arr)}
+    x = requests.patch(url, data = myobj,auth=HTTPBasicAuth('what-bot','f0ba1f94ba5614a6c63357a5770a8e2707aab72e86e0ead124f769c7a7b5a1b0'))
 
 def init():
     try:
@@ -27,36 +35,25 @@ def init():
 
 def wabot(mydb,driver):
     try:
-        sql = "SELECT * FROM outbox_whatsapp WHERE ow_status=0 ORDER BY ow_created ASC LIMIT 100"
-        if (mydb.is_connected()):
-            now = datetime.datetime.now()
-            now = now.strftime("%Y-%m-%d %H:%M:%S")
-            print("check outbox" + str(now))
-            status_driver = driver.get_status()
-            is_connected = False
-            if (status_driver==WhatsAPIDriverStatus.LoggedIn):
-                mycursor = mydb.cursor()
-                mycursor.execute(sql)
-                myresult = mycursor.fetchall()
-                for row in myresult:
-                    id = row[0]
-                    to = row[2]
-                    msg = row[3]
+        if (status_driver==WhatsAPIDriverStatus.LoggedIn):
+            url = "https://wa.golekonline.com/api1/message/outbox"
+            myResponse = requests.get(url,auth=HTTPBasicAuth('what-bot','f0ba1f94ba5614a6c63357a5770a8e2707aab72e86e0ead124f769c7a7b5a1b0'), verify=True)
+            # For successful API call, response code will be 200 (OK)
+            arr_id = []
+            if(myResponse.ok):
+                jData = json.loads(myResponse.content)
+                for key in jData:
+                    id = key['ow_id']
+                    to = key['ow_to']
+                    msg = key['ow_message']
+                    arr_id.append(id)
                     print("Send Message '" + str(msg) +"' to " + str(to))
-
-                    #send whatsapp
-                    #if (is_connected==True):
                     send_msg = driver.send_message_to_id(str(to)+"@c.us",str(msg))
-                    print("status msg : ", send_msg)
-                        #update db
-                    sql_update = "UPDATE outbox_whatsapp SET ow_status=1, ow_send_time='" + str(now) + "' WHERE ow_id=" + str(id)
-                    mycursor.execute(sql_update)
-                    mydb.commit()
-                    #else:
-                    #    print("WhatsApp tidak terhubung")
+                
+                update(arr_id)
+            else:
+                myResponse.raise_for_status()
 
-            mycursor.close()
-            mydb.close()
     except Error as e:
         print("Error : ",e)
         print("restarting...")
@@ -65,19 +62,6 @@ def wabot(mydb,driver):
 def wabot_loop(driver):
     while True:
         time.sleep(10)
-        try:
-            mydb = mysql.connector.connect(
-                host="host",
-                user="user_db",
-                passwd="pass_db",
-                database="db"
-            )
-        except Error as e:
-            print("Error Connection",e)
-            print("restarting...")
-            driver.close()
-            init()
-            break
-        finally:
-            wabot(mydb,driver)
+        wabot(mydb,driver)
+            
 init()
