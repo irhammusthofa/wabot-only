@@ -2,8 +2,6 @@ import os, sys, time, json
 import datetime
 from webwhatsapi import WhatsAPIDriver, WhatsAPIDriverStatus
 from webwhatsapi.objects.message import Message
-import mysql.connector
-from mysql.connector import Error
 from pathlib import Path
 import requests
 from requests.auth import HTTPBasicAuth
@@ -33,7 +31,7 @@ def init():
         driver.close()
         init()
 
-def wabot(mydb,driver):
+def wabot(driver):
     try:
         if (status_driver==WhatsAPIDriverStatus.LoggedIn):
             url = "https://wa.golekonline.com/api1/message/outbox"
@@ -62,6 +60,6 @@ def wabot(mydb,driver):
 def wabot_loop(driver):
     while True:
         time.sleep(10)
-        wabot(mydb,driver)
+        wabot(driver)
             
 init()
