@@ -9,10 +9,8 @@ import json
 
 def update(arr):
     try:
-        url = 'http://localhost:5000/messages'
-        myobj = {"_id":arr}
-        print(myobj)
-        x = requests.put(url,json=myobj)
+        url = 'http://localhost:5000/message/' + arr
+        x = requests.put(url)
     except Exception as e:
         print('Error:' + str(e))
 
@@ -34,23 +32,22 @@ def wabot(driver):
         status_driver = driver.get_status()
         if (status_driver==WhatsAPIDriverStatus.LoggedIn):
             url = "http://localhost:5000/messages"
-            myResponse = requests.get(url, verify=True).json()
+            myResponse = requests.get(url, verify=True)
             # For successful API call, response code will be 200 (OK)
             arr_id = []
-            if(len(myResponse) > 0):
-                jData = myResponse
+            if(myResponse.ok):
+                jData = json.loads(myResponse.content.decode('utf-8'))
                 for key in jData:
                     id = key['_id']
-                    to = key['Phone']
-                    msg = key['Message']
+                    to = key['phone']
+                    msg = key['message']
                     arr_id.append(id)
                     print("Send Message '" + str(msg) +"' to " + str(to))
                     send_msg = driver.send_message_to_id(str(to)+"@c.us",str(msg))
-
-                if len(arr_id) > 0:
-                    update(arr_id)
                 
-                
+                update(arr_id)
+            else:
+                myResponse.raise_for_status()
     except Exception as e:
         print("Error:" + str(e))
 
